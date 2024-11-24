@@ -48,9 +48,11 @@ def remove_student(file_path, students_list, imie):              #usuwanie stude
             file.write(student + ",")
     print("Student został usunięty")
 
-def export_students(file_path2, students_list):
+def export_students(file_path2, students_list, current_date=None):
+    if current_date is None:
+        current_date = datetime.now().strftime("%Y-%m-%d")
     with open(file_path2, "a") as file:
-        file.write(str(datetime.now()) + "\n")          #zapisywanie obecnosci studentow do pliku
+        file.write(str(current_date) + "\n")          #zapisywanie obecnosci studentow do pliku
         for student, attendance in students_list.items():
             if attendance == True:
                 file.write(f"{student} - obecny\n")
@@ -77,6 +79,7 @@ def edit_students(students_list, imie, obecnosc):
         students_list.update({imie : True})
     else:
         students_list.update({imie : False})
+
 def print_students():
     for student in students_list:
         print(student)

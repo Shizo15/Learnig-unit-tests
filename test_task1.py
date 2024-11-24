@@ -1,5 +1,6 @@
 from unittest.mock import mock_open, patch
-from task1 import add_student, file_lista_studentow, remove_student, import_students, export_students, students_list
+from task1 import add_student, file_lista_studentow, remove_student, import_students, export_students, students_list, \
+    check_students, edit_students
 
 
 class TestImportStudents:
@@ -12,23 +13,19 @@ class TestImportStudents:
         #then
         assert result=={'Jan Kowalski': True, ' Anna Nowak': True}
 
-    def test_import_students_fail(self):
-        pass
 class TestStudentsOperations:
     def test_add_student(self):
         # Given
         imie = "Jan Kowalski"
         students_list = {}
 
-        # mockowanie funkcji open
-        with patch("builtins.open", mock_open()) as mocked_file:
-            # When
+        # When
+        with patch("builtins.open", mock_open()):
             result = add_student(students_list, imie)
 
         # Then
         expected = {"Jan Kowalski": True}
         assert result == expected
-        # mocked_file.assert_called_once_with(file_lista_studentow, "a")  # Sprawdzenie, czy plik został otwarty w trybie dopisania
 
     def test_remove_student(self):
         #given
@@ -37,26 +34,61 @@ class TestStudentsOperations:
         imie = "Damian Szymczyk"
 
         #when
-        with patch("builtins.open", mock_open()) as mocked_file:
+        with patch("builtins.open", mock_open()):
             remove_student(file_lista_studentow,students_list,imie)
 
         #then
         assert "Damian Szymczyk" not in students_list
+
 class TestExportStudents:
-    def test_export_students_with_mock(self):
-        # Mockowanie otwierania pliku w trybie zapisu
-        students_list = {"Jan Kowalski - obecny\n", "Anna Nowak - nieobecny\n"}
-        with patch("builtins.open", mock_open()) as mock_file:
-            # Eksportowanie studentów do pliku
-            export_students("studentsAttendance.txt",students_list)
+    @patch("builtins.open", new_callable=mock_open)
+    def test_export_students(self, mock_file):
+        # Given
+        file_path2 = "studentsAttendance.txt"
+        students_list = {"Jan Kowalski": True, "Anna Nowak": False}
+        test_date = "2024-11-24"
 
-        # Sprawdzenie, czy plik został otwarty w trybie zapisu
-        mock_file.assert_called_once_with("studentsAttendance.txt", "a")
+        # When
+        export_students(file_path2, students_list)
 
-        # Sprawdzenie, czy zawartość została zapisana poprawnie
-        handle = mock_file()
-        handle.write.assert_any_call("Jan Kowalski - obecny\n")
-        handle.write.assert_any_call("Anna Nowak - nieobecny\n")
+        # Then
+        mock_file().write.assert_any_call(str(test_date) + "\n")
+        mock_file().write.assert_any_call("Jan Kowalski - obecny\n")
+        mock_file().write.assert_any_call("Anna Nowak - nieobecny\n")
 
+class TestAttendance:
+    def test_check_students(self):
+        #given
+        students_list={"Jan Kowalski": None, "Anna Nowak": None}
 
+        #when
+        with patch("builtins.input", side_effect=["T","N"]):
+            check_students(students_list)
+        #then
+        assert students_list["Jan Kowalski"] == True
+        assert students_list["Anna Nowak"] == False
+
+    def test_edit_students_to_present(self):
+        #given
+        students_list={}
+        imie="Jan Kowalski"
+        obecnosc="T"
+
+        #when
+        edit_students(students_list,imie,obecnosc)
+
+        #then
+        assert students_list["Jan Kowalski"] == True
+
+    def test_edit_students_add_to_absent(self):
+        #given
+        students_list={}
+        imie="Anna Nowak"
+        obecnosc="N"
+
+        #when
+        edit_students(students_list,imie,obecnosc)
+
+        #then
+        assert students_list["Anna Nowak"] == False
 

@@ -2,6 +2,10 @@ from unittest.mock import mock_open, patch
 from task1 import add_student, file_lista_studentow, remove_student, import_students, export_students, students_list, \
     check_students, edit_students
 
+#obsłużyc puste pliki, brak przecina itp
+#zrobic handler do plikow
+#zobaczy co to spy
+#przetestować czy format na liście/dict jest poprawny - dane prawidłowe są podawane
 
 class TestImportStudents:
     def test_import_students(self):

@@ -1,119 +1,124 @@
 from datetime import datetime
+import uuid
 
 
 def menu():
-        print("Wybierz opcję:")
-        print("1. Importuj studentów z pliku")
-        print("2. Dodaj nowego studenta")
-        print("3. Zaznacz obecność studenta")
-        print("4. Edytuj obecność studenta")
-        print("5. Usuń studenta z bazy")
-        print("6. Zapisz listę studentów do pliku")
-        print("7. Wyświetl studentów z listy")
-        print("8. Wyjdź")
-        wybor = input("Wybierz opcję: ")
-        return wybor
+    print("Choose an option:")
+    print("1. Import students from a file")
+    print("2. Add a new student")
+    print("3. Mark student attendance")
+    print("4. Edit student attendance")
+    print("5. Remove a student")
+    print("6. Save student list to a file")
+    print("7. Display student list")
+    print("8. Exit")
+    choice = input("Choose an option: ")
+    return choice
 
 
-def import_students(file_lista_studentow):
-    students_list = {}          #import studentow
+def import_students(file_path):
+    students_list = {}
     try:
-        with open(file_lista_studentow, 'r') as file:
+        with open(file_path, 'r') as file:
             for line in file:
                 students = line.strip().split(',')
                 for student in students:
-                    if student != "":
-                        students_list[student] = True
-            print("Lista studentów zaimportowana pomyślnie.")
+                    student = student.strip()
+                    if student and " " in student:
+                        student_id = str(uuid.uuid4())
+                        students_list[student_id] = {"name": student, "attendance": False}
+                    else:
+                        print(f"Invalid student format: {student}")
+            print("Student list imported successfully.")
     except FileNotFoundError:
-        print("Plik nie istnieje. Zaczynamy z pustą listą.")
-    return students_list
-
-def add_student(students_list, imie):
-    with open(file_lista_studentow, "a") as file:
-        students_list[imie] = True
-        file.write(imie + ",")
-    print("Student został dodany pomyślnie")
+        print("File not found. Starting with an empty list.")
     return students_list
 
 
-def remove_student(file_path, students_list, imie):              #usuwanie studenta
-    if imie in students_list:
-        students_list.pop(imie)
-        print("Student został usunięty")
+def add_student(students_list, name):
+    student_id = str(uuid.uuid4())
+    students_list[student_id] = {"name": name, "attendance": False}
+    print(f"Student added successfully. ID: {student_id}")
+    return students_list
+
+
+def remove_student(students_list, student_id):
+    if student_id in students_list:
+        del students_list[student_id]
+        print("Student removed successfully.")
     else:
-        print("Takiego studenta nie ma w bazie")
-    with open(file_path, "w") as file:
-        for student in students_list.keys():
-            file.write(student + ",")
-    print("Student został usunięty")
+        print("No student found with the given ID.")
+    return students_list
 
-def export_students(file_path2, students_list, current_date=None):
-    if current_date is None:
-        current_date = datetime.now().strftime("%Y-%m-%d")
-    with open(file_path2, "a") as file:
-        file.write(str(current_date) + "\n")          #zapisywanie obecnosci studentow do pliku
-        for student, attendance in students_list.items():
-            if attendance == True:
-                file.write(f"{student} - obecny\n")
-            else:
-                file.write(f"{student} - nieobecny\n")
-    print("Lista studentów zapisana pomyślnie.")
+
+def export_students(file_path, students_list):
+    with open(file_path, "a") as file:
+        file.write(str(datetime.now()) + "\n")
+        for student_id, student_data in students_list.items():
+            attendance = "present" if student_data["attendance"] else "absent"
+            file.write(f"{student_data['name']} (ID: {student_id}) - {attendance}\n")
+    print("Student list saved successfully.")
 
 
 def check_students(students_list):
-    for student in students_list:
-        print(f"czy {student} jest obecny? ")  # sprawdzanie obecnosci
-        obecnosc = input("T/N: ")
-        if obecnosc.upper() == 'T':
-            students_list[student] = True
-        elif obecnosc.upper() == 'N':
-            students_list[student] = False
+    for student_id, student_data in students_list.items():
+        attendance = input(f"Is {student_data['name']} (ID: {student_id}) present? (Y/N): ").strip().upper()
+        if attendance == 'Y':
+            students_list[student_id]["attendance"] = True
+        elif attendance == 'N':
+            students_list[student_id]["attendance"] = False
         else:
-            raise Exception("Błędny wybór, edytuj później.")
+            print("Invalid choice. Skipping.")
+    return students_list
 
 
-def edit_students(students_list, imie, obecnosc):
-
-    if obecnosc.upper() == 'T':
-        students_list.update({imie : True})
+def edit_students(students_list, student_id, attendance):
+    if student_id in students_list:
+        if attendance.upper() == 'Y':
+            students_list[student_id]["attendance"] = True
+        elif attendance.upper() == 'N':
+            students_list[student_id]["attendance"] = False
+        else:
+            print("Invalid attendance format. No changes made.")
     else:
-        students_list.update({imie : False})
+        print("No student found with the given ID.")
+    return students_list
 
-def print_students():
-    for student in students_list:
-        print(student)
 
-  # Ścieżka do pliku TXT
-file_lista_studentow = 'students.txt' #lista nazwisk studentow
-file_obecnosc = 'studentsAttendance.txt' #listy obecnosci z datami
+def print_students(students_list):
+    for student_id, student_data in students_list.items():
+        attendance = "present" if student_data["attendance"] else "absent"
+        print(f"{student_data['name']} (ID: {student_id}) - {attendance}")
+
+
+# File paths
+file_student_list = 'students.txt'
+file_attendance = 'studentsAttendance.txt'
 students_list = {}
 
 
 if __name__ == "__main__":
     while True:
-        wybor = menu()
-        if wybor == '1':
-            students_list = import_students(file_lista_studentow)    # importowanie studenta z pliku
-        elif wybor == '2':
-            imie = input("Podaj imię i nazwisko studenta do dodania: ")
-            add_student(students_list, imie)        #  dodawanie studenta do listy
-        elif wybor == '3':
-            check_students(students_list)       # sprawdzanie obecnosci studenta
-        elif wybor == '4':
-            imie = input("Podaj imię studenta: ")  # zmiana obecnosci studenta
-            obecnosc = input("Czy był obecny? T/N: ")
-            edit_students(students_list,imie, obecnosc)         # edytowanie obecnosci studenta
-        elif wybor == '5':
-            imie = input("Podaj imię i nazwisko studenta do usunięcia: ")
-            remove_student(students_list,imie)       #usuwanie studenta
-        elif wybor == '6':
-            export_students(file_obecnosc, students_list)      #zapisywanie obecnosci do pliku
-        elif wybor=='7':
-            print_students()
-        elif wybor == '8':
+        choice = menu()
+        if choice == '1':
+            students_list = import_students(file_student_list)
+        elif choice == '2':
+            name = input("Enter the name of the student to add: ").strip()
+            students_list = add_student(students_list, name)
+        elif choice == '3':
+            students_list = check_students(students_list)
+        elif choice == '4':
+            student_id = input("Enter the student's ID: ").strip()
+            attendance = input("Was the student present? (Y/N): ").strip()
+            students_list = edit_students(students_list, student_id, attendance)
+        elif choice == '5':
+            student_id = input("Enter the ID of the student to remove: ").strip()
+            students_list = remove_student(students_list, student_id)
+        elif choice == '6':
+            export_students(file_attendance, students_list)
+        elif choice == '7':
+            print_students(students_list)
+        elif choice == '8':
             exit()
         else:
-            print("Błędny wybór")
-
-
+            print("Invalid choice.")

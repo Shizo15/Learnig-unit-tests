@@ -1,98 +1,92 @@
 from unittest.mock import mock_open, patch
-from task1 import add_student, file_lista_studentow, remove_student, import_students, export_students, students_list, \
+from task1 import add_student, remove_student, import_students, export_students, students_list, \
     check_students, edit_students
-
-#obsłużyc puste pliki, brak przecina itp
-#zrobic handler do plikow
-#zobaczy co to spy
-#przetestować czy format na liście/dict jest poprawny - dane prawidłowe są podawane
 
 class TestImportStudents:
     def test_import_students(self):
-        #given
-        file_content="Jan Kowalski, Anna Nowak,"
-        #when
-        with patch('builtins.open', mock_open(read_data=file_content)):
-            result=import_students(file_lista_studentow)
-        #then
-        assert result=={'Jan Kowalski': True, ' Anna Nowak': True}
+        file_content = "Jan Kowalski,Anna Nowak"
+
+        with patch("builtins.open", mock_open(read_data=file_content)):
+            result = import_students("students.txt")
+
+        assert len(result) == 2
+        for student_id, student_data in result.items():
+            assert "name" in student_data and "attendance" in student_data
+            assert isinstance(student_data["name"], str)
+            assert student_data["attendance"] is False
+
+    def test_import_empty_file(self):
+        with patch("builtins.open", mock_open(read_data="")):
+            result = import_students("students.txt")
+        assert result == {}
+
+    def test_import_nonexistent_file(self):
+        with patch("builtins.open", side_effect=FileNotFoundError):
+            result = import_students("students.txt")
+        assert result == {}
+
+    def test_import_invalid_format(self):
+        invalid_data = "JanKowalski AnnaNowak"
+        with patch("builtins.open", mock_open(read_data=invalid_data)):
+            result = import_students("students.txt")
+            assert result == {}, "Invalid format data should return an empty dictionary"
+
 
 class TestStudentsOperations:
     def test_add_student(self):
-        # Given
-        imie = "Jan Kowalski"
         students_list = {}
+        name = "Jan Kowalski"
+        result = add_student(students_list, name)
+        assert len(result) == 1
+        student_id = list(result.keys())[0]
+        assert result[student_id]["name"] == name
+        assert result[student_id]["attendance"] is False
 
-        # When
-        with patch("builtins.open", mock_open()):
-            result = add_student(students_list, imie)
+    def test_remove_existing_student(self):
+        students_list = {"1234": {"name": "Jan Kowalski", "attendance": True}}
+        result = remove_student(students_list, "1234")
+        assert "1234" not in result
+        assert len(result) == 0
 
-        # Then
-        expected = {"Jan Kowalski": True}
-        assert result == expected
-
-    def test_remove_student(self):
-        #given
-        file_lista_studentow = "students.txt"
-        students_list = {"Jan Kowalski": True, "Damian Szymczyk":True}
-        imie = "Damian Szymczyk"
-
-        #when
-        with patch("builtins.open", mock_open()):
-            remove_student(file_lista_studentow,students_list,imie)
-
-        #then
-        assert "Damian Szymczyk" not in students_list
+    def test_remove_nonexistent_student(self):
+        students_list = {"1234": {"name": "Jan Kowalski", "attendance": True}}
+        result = remove_student(students_list, "5678")
+        assert "1234" in result
+        assert len(result) == 1
 
 class TestExportStudents:
     @patch("builtins.open", new_callable=mock_open)
     def test_export_students(self, mock_file):
-        # Given
-        file_path2 = "studentsAttendance.txt"
-        students_list = {"Jan Kowalski": True, "Anna Nowak": False}
-        test_date = "2024-11-24"
+        students_list = {
+            "1234": {"name": "Jan Kowalski", "attendance": True},
+            "5678": {"name": "Anna Nowak", "attendance": False},
+        }
+        export_students("studentsAttendance.txt", students_list)
+        mock_file.assert_called_once_with("studentsAttendance.txt", "a")
+        handle = mock_file()
+        handle.write.assert_any_call("Jan Kowalski (ID: 1234) - present\n")
+        handle.write.assert_any_call("Anna Nowak (ID: 5678) - absent\n")
 
-        # When
-        export_students(file_path2, students_list)
-
-        # Then
-        mock_file().write.assert_any_call(str(test_date) + "\n")
-        mock_file().write.assert_any_call("Jan Kowalski - obecny\n")
-        mock_file().write.assert_any_call("Anna Nowak - nieobecny\n")
 
 class TestAttendance:
     def test_check_students(self):
-        #given
-        students_list={"Jan Kowalski": None, "Anna Nowak": None}
+        students_list = {
+            "1234": {"name": "Jan Kowalski", "attendance": False},
+            "5678": {"name": "Anna Nowak", "attendance": False},
+        }
+        with patch("builtins.input", side_effect=["Y", "N"]):
+            result = check_students(students_list)
+        assert result["1234"]["attendance"] is True
+        assert result["5678"]["attendance"] is False
 
-        #when
-        with patch("builtins.input", side_effect=["T","N"]):
-            check_students(students_list)
-        #then
-        assert students_list["Jan Kowalski"] == True
-        assert students_list["Anna Nowak"] == False
+    def test_edit_existing_student_attendance(self):
+        students_list = {"1234": {"name": "Jan Kowalski", "attendance": False}}
+        result = edit_students(students_list, "1234", "Y")
+        assert result["1234"]["attendance"] is True
 
-    def test_edit_students_to_present(self):
-        #given
-        students_list={}
-        imie="Jan Kowalski"
-        obecnosc="T"
-
-        #when
-        edit_students(students_list,imie,obecnosc)
-
-        #then
-        assert students_list["Jan Kowalski"] == True
-
-    def test_edit_students_add_to_absent(self):
-        #given
-        students_list={}
-        imie="Anna Nowak"
-        obecnosc="N"
-
-        #when
-        edit_students(students_list,imie,obecnosc)
-
-        #then
-        assert students_list["Anna Nowak"] == False
+    def test_edit_nonexistent_student(self):
+        students_list = {"1234": {"name": "Jan Kowalski", "attendance": False}}
+        result = edit_students(students_list, "5678", "Y")
+        assert "5678" not in result
+        assert result["1234"]["attendance"] is False
 

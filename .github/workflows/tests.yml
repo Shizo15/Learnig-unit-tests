@@ -33,7 +33,7 @@ jobs:
     # 4. Uruchamianie testów z raportem pokrycia
     - name: Run unit tests with coverage
       run: |
-        pytest -vv --cov=tests
+        pytest -vv --cov=src --cov=tests
 
 #    # 5. Przesyłanie raportu pokrycia do GitHub (opcjonalne, jeśli używasz Codecov lub podobnego narzędzia)
 #    - name: Upload coverage report

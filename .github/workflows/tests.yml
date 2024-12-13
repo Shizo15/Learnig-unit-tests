@@ -33,22 +33,9 @@ jobs:
     # 4. Uruchamianie testów z ustawieniem PYTHONPATH
     - name: Run unit tests with coverage
       run: |
-        export PYTHONPATH=$PWD/src  # Ustawienie PYTHONPATH do katalogu src
+#        export PYTHONPATH=$PWD/src  # Ustawienie PYTHONPATH do katalogu src
         pytest -vv --cov=src --cov=tests 
 
-    # 5. Przesyłanie raportu pokrycia do GitHub (raport w formacie XML)
-#    - name: Upload coverage report
-#      uses: actions/upload-artifact@v3
-#      with:
-#        name: coverage-report
-#        path: coverage.xml
-
-
-#    # 5. Przesyłanie raportu pokrycia do GitHub (opcjonalne, jeśli używasz Codecov lub podobnego narzędzia)
-#    - name: Upload coverage report
-#      uses: codecov/codecov-action@v3
-#      with:
-#        files: ./coverage.xml
 
 #  lint:
 #    runs-on: ubuntu-latest

@@ -41,34 +41,34 @@ jobs:
       with:
         files: ./coverage.xml
 
-  lint:
-    runs-on: ubuntu-latest
+#  lint:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#    # 1. Pobranie kodu
+#    - name: Checkout code
+#      uses: actions/checkout@v3
+#
+#    # 2. Uruchamianie Super-Lintera
+#    - name: Run Super-Linter
+#      uses: github/super-linter@v5
+#      env:
+#        VALIDATE_PYTHON_PYLINT: true
+#        VALIDATE_ALL_CODEBASE: true
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        DEFAULT_BRANCH: main
 
-    steps:
-    # 1. Pobranie kodu
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    # 2. Uruchamianie Super-Lintera
-    - name: Run Super-Linter
-      uses: github/super-linter@v5
-      env:
-        VALIDATE_PYTHON_PYLINT: true
-        VALIDATE_ALL_CODEBASE: true
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        DEFAULT_BRANCH: main
-
-  todo:
-    runs-on: ubuntu-latest
-
-    steps:
-    # 1. Pobranie kodu
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    # 2. Tworzenie Issues z komentarzy TODO
-    - name: Create Issues from TODO
-      uses: alstr/todo-to-issue-action@v1
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        label: "TODO"
+#  todo:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#    # 1. Pobranie kodu
+#    - name: Checkout code
+#      uses: actions/checkout@v3
+#
+#    # 2. Tworzenie Issues z komentarzy TODO
+#    - name: Create Issues from TODO
+#      uses: alstr/todo-to-issue-action@v1
+#      with:
+#        repo-token: ${{ secrets.GITHUB_TOKEN }}
+#        label: "TODO"

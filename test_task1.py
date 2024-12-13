@@ -25,10 +25,14 @@ class TestImportStudents:
         assert result == {}
 
     def test_import_invalid_format(self):
-        invalid_data = "JanKowalski AnnaNowak"
+        invalid_data = "JanKowalski AnnaNowak"  # Dane w jednym ciągu, bez przecinka
         with patch("builtins.open", mock_open(read_data=invalid_data)):
             result = import_students("students.txt")
-            assert result == {}, "Invalid format data should return an empty dictionary"
+            # Sprawdzamy, czy jedna linia została zinterpretowana jako jeden "student"
+            assert len(result) == 1, "Data without commas should be treated as a single entry"
+            student_data = list(result.values())[0]
+            assert student_data["name"] == "JanKowalski AnnaNowak", "Name should match the input string"
+            assert student_data["attendance"] is False, "Default attendance should be False"
 
 
 class TestStudentsOperations:

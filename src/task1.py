@@ -21,18 +21,25 @@ def import_students(file_path):
     try:
         with open(file_path, 'r') as file:
             for line in file:
+                # Zakładamy, że każdy wiersz zawiera listę studentów oddzielonych przecinkami
                 students = line.strip().split(',')
                 for student in students:
                     student = student.strip()
-                    if student and " " in student:
+                    # Dodajemy warunek, że każdy student musi mieć dokładnie dwie części (imię i nazwisko)
+                    if student and len(student.split()) == 2:
                         student_id = str(uuid.uuid4())
                         students_list[student_id] = {"name": student, "attendance": False}
                     else:
+                        # Ignorujemy niepoprawne wpisy
                         print(f"Invalid student format: {student}")
-            print("Student list imported successfully.")
+            # Jeżeli nie ma żadnych poprawnych wpisów
+            if not students_list:
+                print("No valid students imported. File might contain invalid formats.")
     except FileNotFoundError:
         print("File not found. Starting with an empty list.")
     return students_list
+
+
 
 
 def add_student(students_list, name):

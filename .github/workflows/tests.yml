@@ -3,10 +3,10 @@ name: CI Pipeline
 on:
   push:
     branches:
-      - '**'  # Uruchamianie na wszystkich branchach
+      - '**'
   pull_request:
     branches:
-      - '**'  # Uruchamianie na wszystkich PR
+      - '**'
 
 jobs:
   test:
@@ -21,7 +21,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: 3.13.0
+        python-version: 3.13
 
     # 3. Instalacja zależności
     - name: Install dependencies
@@ -33,8 +33,7 @@ jobs:
     # 4. Uruchamianie testów z raportem pokrycia
     - name: Run unit tests with coverage
       run: |
-        pytest -vv --cov= .
-
+        pytest -vv --cov=task1 --cov-report=term
 
 #  lint:
 #    runs-on: ubuntu-latest
@@ -53,17 +52,4 @@ jobs:
 #        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #        DEFAULT_BRANCH: main
 
-#  todo:
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#    # 1. Pobranie kodu
-#    - name: Checkout code
-#      uses: actions/checkout@v3
-#
-#    # 2. Tworzenie Issues z komentarzy TODO
-#    - name: Create Issues from TODO
-#      uses: alstr/todo-to-issue-action@v1
-#      with:
-#        repo-token: ${{ secrets.GITHUB_TOKEN }}
-#        label: "TODO"
+

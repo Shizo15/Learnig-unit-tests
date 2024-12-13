@@ -33,7 +33,7 @@ jobs:
     # 4. Uruchamianie testów z ustawieniem PYTHONPATH
     - name: Run unit tests with coverage
       run: |
-#        export PYTHONPATH=$PWD/src  # Ustawienie PYTHONPATH do katalogu src
+        export PYTHONPATH=$PWD/src  # Ustawienie PYTHONPATH do katalogu src
         pytest -vv --cov=src --cov=tests 
 
 

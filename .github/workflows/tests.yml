@@ -33,7 +33,7 @@ jobs:
     # 4. Uruchamianie testów z raportem pokrycia
     - name: Run unit tests with coverage
       run: |
-        pytest -vv --cov=task1 --cov-report=term
+        pytest -vv --cov=task1 --cov=test_task1 --cov-report=term
 
 #  lint:
 #    runs-on: ubuntu-latest

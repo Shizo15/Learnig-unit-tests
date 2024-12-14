@@ -1,5 +1,5 @@
 from unittest.mock import mock_open, patch
-from src.task1 import add_student, remove_student, import_students, export_students, check_students, edit_students
+from task1 import add_student, remove_student, import_students, export_students, check_students, edit_students
 
 class TestImportStudents:
     def test_import_students(self):

@@ -1,9 +1,9 @@
 name: CI Pipeline
 
 on:
-  push:
-    branches:
-      - '**'
+#  push:
+#    branches:
+#      - '**'
   pull_request:
     branches:
       - '**'
@@ -33,7 +33,7 @@ jobs:
     # 4. Uruchamianie testów z raportem pokrycia
     - name: Run unit tests with coverage
       run: |
-        pytest -vv --cov=task1 --cov=test_task1
+        pytest -vv --cov=task1 --cov=test_task1 
 
 #  lint:
 #    runs-on: ubuntu-latest

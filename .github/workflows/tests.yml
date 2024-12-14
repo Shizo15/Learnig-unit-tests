@@ -63,22 +63,3 @@ jobs:
           CACHE_DIR: .cache/super-linter
 
 
-
-#  lint:
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#    # 1. Pobranie kodu
-#    - name: Checkout code
-#      uses: actions/checkout@v3
-#
-#    # 2. Uruchamianie Super-Lintera
-#    - name: Run Super-Linter
-#      uses: github/super-linter@v5
-#      env:
-#        VALIDATE_PYTHON_PYLINT: true
-#        VALIDATE_ALL_CODEBASE: true
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        DEFAULT_BRANCH: main
-
-

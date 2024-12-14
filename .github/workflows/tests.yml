@@ -29,23 +29,37 @@ jobs:
 
     - name: Run unit tests with coverage
       run: |
-        pytest -vv --cov=task1 
+        pytest -vv --cov=task1
+  lint:
+    runs-on: ubuntu-latest
 
-#  lint:
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#    # 1. Pobranie kodu
-#    - name: Checkout code
-#      uses: actions/checkout@v3
-#
-#    # 2. Uruchamianie Super-Lintera
-#    - name: Run Super-Linter
-#      uses: github/super-linter@v5
-#      env:
-#        VALIDATE_PYTHON_PYLINT: true
-#        VALIDATE_ALL_CODEBASE: true
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        DEFAULT_BRANCH: main
+    permissions:
+      contents: read
+      packages: read
+      # To report GitHub Actions status checks
+      statuses: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # super-linter needs the full git history to get the
+          # list of files that changed across commits
+          fetch-depth: 0
+
+      - name: Cache super-linter
+        uses: actions/cache@v3
+        with:
+          path: .cache/super-linter
+          key: ${{ runner.os }}-super-linter-${{ hashFiles('**/*.py') }}
+          restore-keys: |
+              ${{ runner.os }}-super-linter-
+      - name: Super-linter
+        uses: super-linter/super-linter@v7.2.1 # x-release-please-version
+        env:
+          # To report GitHub Actions status checks
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_PYTHON_RUFF: true
+          CACHE_DIR: .cache/super-linter
 
 

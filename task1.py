@@ -15,6 +15,7 @@ def menu():
     choice = input("Choose an option: ")
     return choice
 
+# TODO: Nothing but testing how it works :S
 
 def import_students(file_path):
     students_list = {}
@@ -40,8 +41,7 @@ def import_students(file_path):
     return students_list
 
 
-
-
+# TODO: And next one here
 def add_student(students_list, name):
     student_id = str(uuid.uuid4())
     students_list[student_id] = {"name": name, "attendance": False}

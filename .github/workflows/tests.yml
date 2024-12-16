@@ -8,6 +8,8 @@ on:
     branches:
       - '**'
 
+permission: read-all
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -62,7 +64,7 @@ jobs:
           VALIDATE_PYTHON_RUFF: true
           CACHE_DIR: .cache/super-linter
 
-  todo-to-issue:
+todo-to-issue:
       runs-on: "ubuntu-latest"
       steps:
         - uses: "actions/checkout@v4"

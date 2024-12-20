@@ -4,7 +4,7 @@ from setuptools import find_packages, setup
 with open("requirements.txt") as f:
     requirements = f.read().splitlines()
 
-version = os.getenv("VERSION", "0.0.2")
+version = os.getenv("VERSION", "0.0.0")
 
 setup(
     name="Learnig-unit-tests",

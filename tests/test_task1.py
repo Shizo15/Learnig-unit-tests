@@ -1,5 +1,5 @@
 from unittest.mock import mock_open, patch
-from task1 import add_student, remove_student, import_students, export_students, check_students, edit_students
+from src.task1 import add_student, remove_student, import_students, export_students, check_students, edit_students
 
 class TestImportStudents:
     def test_import_students(self):
@@ -25,10 +25,10 @@ class TestImportStudents:
         assert result == {}
 
     def test_import_invalid_format(self):
-        invalid_data = "JanKowalski AnnaNowak"  # Dane w jednym ciągu, bez przecinka
+        invalid_data = "JanKowalski AnnaNowak"
         with patch("builtins.open", mock_open(read_data=invalid_data)):
             result = import_students("students.txt")
-            # Sprawdzamy, czy jedna linia została zinterpretowana jako jeden "student"
+
             assert len(result) == 1, "Data without commas should be treated as a single entry"
             student_data = list(result.values())[0]
             assert student_data["name"] == "JanKowalski AnnaNowak", "Name should match the input string"
